@@ -238,6 +238,32 @@
   }
   .pix-box p{font-size:13px; color:var(--text-muted); line-height:1.5;}
 
+  .pix-loading{display:flex; flex-direction:column; align-items:center; gap:12px; padding:10px 0;}
+  .pix-spinner{
+    width:32px; height:32px; border-radius:50%;
+    border:3px solid rgba(184,137,45,0.2); border-top-color:var(--gold);
+    animation:pix-spin 0.8s linear infinite;
+  }
+  @keyframes pix-spin{ to{ transform:rotate(360deg); } }
+
+  .pix-qr-wrap{display:flex; flex-direction:column; align-items:center; gap:14px;}
+  .pix-qr-wrap img{width:200px; height:200px; border-radius:10px; border:1px solid var(--border); background:#fff; padding:8px;}
+  .pix-waiting{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--text-muted);}
+  .pix-waiting .pix-spinner{width:16px; height:16px; border-width:2px;}
+  .pix-copy-row{display:flex; gap:8px; width:100%;}
+  .pix-copy-row input{
+    flex:1; min-width:0; background:var(--bg); border:1.5px solid var(--border); border-radius:8px;
+    padding:10px 12px; font-size:12px; color:var(--text); font-family:monospace;
+  }
+  .pix-copy-btn{
+    flex:0 0 auto; background:var(--gold); color:#151412; border:none; border-radius:8px;
+    padding:0 16px; font-size:13px; font-weight:700; cursor:pointer; font-family:'Inter',sans-serif;
+  }
+  .pix-copy-btn.copied{background:var(--green); color:#fff;}
+  .pix-error{color:#e05252; font-size:13px; line-height:1.5;}
+  .pix-paid{display:flex; flex-direction:column; align-items:center; gap:8px; color:var(--green);}
+  .pix-paid .ic{font-size:28px;}
+
   .boleto-box{
     background:var(--bg-panel);
     border:1px solid var(--border);
@@ -545,9 +571,34 @@
     </div>
 
     <div class="pay-panel active" id="panel-pix">
-      <div class="pix-box">
+      <div class="pix-box" id="pix-box-idle">
         <div class="badge">5% de desconto no Pix</div>
-        <p>O QR Code e o código Pix "copia e cola" aparecem aqui após clicar em finalizar. Aprovação automática em poucos minutos.</p>
+        <p>O QR Code e o código Pix "copia e cola" aparecem aqui após clicar em gerar. Aprovação automática em poucos minutos.</p>
+      </div>
+      <div class="pix-box" id="pix-box-loading" style="display:none;">
+        <div class="pix-loading">
+          <div class="pix-spinner"></div>
+          <p>Gerando o seu Pix com segurança...</p>
+        </div>
+      </div>
+      <div class="pix-box" id="pix-box-qr" style="display:none;">
+        <div class="pix-qr-wrap">
+          <img id="pix-qr-img" src="" alt="QR Code Pix">
+          <div class="pix-copy-row">
+            <input type="text" id="pix-copia-cola" readonly>
+            <button type="button" class="pix-copy-btn" id="pix-copy-btn" onclick="copiarPixCode()">Copiar</button>
+          </div>
+          <div class="pix-waiting"><div class="pix-spinner"></div><span>Aguardando confirmação do pagamento...</span></div>
+        </div>
+      </div>
+      <div class="pix-box" id="pix-box-paid" style="display:none;">
+        <div class="pix-paid">
+          <span class="ic">✅</span>
+          <p>Pagamento confirmado! Redirecionando...</p>
+        </div>
+      </div>
+      <div class="pix-box" id="pix-box-error" style="display:none;">
+        <p class="pix-error" id="pix-error-msg">Não foi possível gerar o Pix agora. Tente novamente.</p>
       </div>
     </div>
 
@@ -561,12 +612,12 @@
     </div>
 
     <div class="integration-note">
-      Área de demonstração visual — para processar pagamentos de verdade, conecte este botão ao link/embed do seu gateway.
+      Pagamento processado com segurança pela Simplify. Seus dados de pagamento não passam pelo nosso servidor.
     </div>
 
     <div class="step-nav">
       <button class="btn-ghost" onclick="goToStep(2)">Voltar</button>
-      <button class="btn-primary" id="finalizar-btn" onclick="finalizarCompra()">Gerar Pix — R$ 72,10</button>
+      <button class="btn-primary" id="finalizar-btn" onclick="iniciarPagamentoPix()">Gerar Pix — R$ 72,10</button>
     </div>
     <p class="pay-unavailable-msg" id="pay-unavailable-msg">Pagamento temporariamente indisponível. Tente novamente em instantes.</p>
   </div>
@@ -694,24 +745,123 @@ function recalcTotals(){
   }
 }
 
-function finalizarCompra(){
-  if (currentPayMethod === 'cartao') return;
-  const SUBTOTAL = getSubtotal();
-  const frete = getSelectedFrete();
-  const isPix = currentPayMethod === 'pix';
-  const discount = isPix ? SUBTOTAL * PIX_DISCOUNT_RATE : 0;
-  const total = SUBTOTAL - discount + frete.price;
-  const payLabel = { pix: 'Pix', cartao: 'Cartão de crédito' }[currentPayMethod];
-  const orderId = 'FRN' + Math.floor(100000 + Math.random() * 900000);
-
+function irParaObrigado(orderId, total, frete){
   const params = new URLSearchParams({
     pedido: orderId,
     total: total.toFixed(2),
     frete: frete.label,
-    pagamento: payLabel,
+    pagamento: 'Pix',
     qty: quantity
   });
   window.location.href = 'obrigado.html?' + params.toString();
+}
+
+function showPixBox(which){
+  ['idle','loading','qr','paid','error'].forEach(k => {
+    const el = document.getElementById('pix-box-' + k);
+    if (el) el.style.display = (k === which) ? 'block' : 'none';
+  });
+}
+
+function copiarPixCode(){
+  const input = document.getElementById('pix-copia-cola');
+  input.select();
+  input.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(input.value).then(() => {
+    const btn = document.getElementById('pix-copy-btn');
+    const original = btn.textContent;
+    btn.textContent = 'Copiado!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 2000);
+  }).catch(() => {});
+}
+
+let pixPollTimer = null;
+let pixOrderId = null;
+
+function pararPolling(){
+  if (pixPollTimer){ clearInterval(pixPollTimer); pixPollTimer = null; }
+}
+
+function iniciarPolling(internalId, total, frete){
+  pararPolling();
+  pixPollTimer = setInterval(async () => {
+    try {
+      const res = await fetch('/api/consulta-pix?internal_id=' + encodeURIComponent(internalId));
+      const data = await res.json();
+      if (data.status === 'paid'){
+        pararPolling();
+        showPixBox('paid');
+        setTimeout(() => irParaObrigado(pixOrderId, total, frete), 1500);
+      }
+    } catch (e) {
+      // silencioso — tenta de novo no próximo intervalo
+    }
+  }, 5000);
+}
+
+async function iniciarPagamentoPix(){
+  if (currentPayMethod === 'cartao') return;
+
+  const nome = (document.getElementById('f-nome').value || '').trim();
+  const email = (document.getElementById('f-email').value || '').trim();
+  const celularDigits = (document.getElementById('f-celular').value || '').replace(/\D/g, '');
+  const cpfDigits = (document.getElementById('f-cpf').value || '').replace(/\D/g, '');
+
+  if (!nome || !email || celularDigits.length < 10 || !validarCPF(cpfDigits)){
+    showPixBox('error');
+    document.getElementById('pix-error-msg').textContent = 'Confira seu nome, e-mail, celular e CPF antes de gerar o Pix.';
+    return;
+  }
+
+  const SUBTOTAL = getSubtotal();
+  const frete = getSelectedFrete();
+  const discount = SUBTOTAL * PIX_DISCOUNT_RATE;
+  const total = SUBTOTAL - discount + frete.price;
+  const orderId = 'FRN' + Math.floor(100000 + Math.random() * 900000);
+  pixOrderId = orderId;
+
+  const btn = document.getElementById('finalizar-btn');
+  btn.disabled = true;
+  showPixBox('loading');
+
+  try {
+    const res = await fetch('/api/gerar-pix', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        amount: Number(total.toFixed(2)),
+        name: nome,
+        email: email,
+        phone: celularDigits,
+        document: cpfDigits,
+        external_id: orderId
+      })
+    });
+    const data = await res.json();
+
+    if (!res.ok){
+      showPixBox('error');
+      document.getElementById('pix-error-msg').textContent = data.message || 'Não foi possível gerar o Pix agora. Tente novamente em instantes.';
+      btn.disabled = false;
+      return;
+    }
+
+    document.getElementById('pix-copia-cola').value = data.pix_copia_cola || '';
+    if (data.qrcode_image){
+      document.getElementById('pix-qr-img').src = data.qrcode_image;
+    }
+    showPixBox('qr');
+    btn.disabled = false;
+
+    if (data.internal_id){
+      iniciarPolling(data.internal_id, total, frete);
+    }
+  } catch (err) {
+    showPixBox('error');
+    document.getElementById('pix-error-msg').textContent = 'Erro de conexão ao gerar o Pix. Tente novamente.';
+    btn.disabled = false;
+  }
 }
 
 // Busca automática de endereço pelo CEP (API pública ViaCEP)
