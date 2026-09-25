@@ -114,6 +114,25 @@
   }
   .size-opt:hover{border-color:var(--gold);}
 
+  .qty-row{display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;}
+  .qty-stepper{
+    display:flex; align-items:center; gap:0;
+    border:1.5px solid var(--border); border-radius:8px; overflow:hidden;
+  }
+  .qty-stepper button{
+    width:38px; height:38px;
+    background:transparent; border:none; color:var(--text);
+    font-size:18px; font-weight:700; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; line-height:1;
+  }
+  .qty-stepper button:hover{background:rgba(184,137,45,0.14); color:var(--gold-bright);}
+  .qty-stepper .qty-val{
+    width:38px; height:38px; display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:14.5px; color:var(--text);
+    border-left:1.5px solid var(--border); border-right:1.5px solid var(--border);
+  }
+  .qty-unit-total{font-family:'Oswald',sans-serif; font-weight:600; font-size:14.5px; color:var(--gold-bright);}
+
   .buy-btn{
     width:100%;
     background:var(--gold);
@@ -250,7 +269,7 @@
       <li><span class="ck">✓</span> Personalize com seu nome e número nas costas (opcional)</li>
     </ul>
 
-    <div class="buybox">
+    <div class="buybox" id="buybox-1">
       <div class="price-toggle">
         <div class="price-opt active">
           <div class="opt-label">Sem personalização</div>
@@ -275,6 +294,16 @@
         <div class="size-opt">G</div>
         <div class="size-opt">GG</div>
         <div class="size-opt">XG</div>
+      </div>
+
+      <div class="size-label">Quantidade</div>
+      <div class="qty-row">
+        <div class="qty-stepper">
+          <button type="button" onclick="changeQty(this,-1)">−</button>
+          <span class="qty-val">1</span>
+          <button type="button" onclick="changeQty(this,1)">+</button>
+        </div>
+        <div class="qty-unit-total">R$ 75,90</div>
       </div>
 
       <a class="buy-btn" href="checkout.html" style="display:block; text-align:center; text-decoration:none;">Comprar agora</a>
@@ -328,7 +357,7 @@
     <h2>Garanta a sua</h2>
     <div class="stock-sub">Estoque limitado desta arte exclusiva.</div>
 
-    <div class="buybox">
+    <div class="buybox" id="buybox-2">
       <div class="price-toggle">
         <div class="price-opt active">
           <div class="opt-label">Sem personalização</div>
@@ -351,6 +380,15 @@
         <div class="size-opt">G</div>
         <div class="size-opt">GG</div>
         <div class="size-opt">XG</div>
+      </div>
+      <div class="size-label">Quantidade</div>
+      <div class="qty-row">
+        <div class="qty-stepper">
+          <button type="button" onclick="changeQty(this,-1)">−</button>
+          <span class="qty-val">1</span>
+          <button type="button" onclick="changeQty(this,1)">+</button>
+        </div>
+        <div class="qty-unit-total">R$ 75,90</div>
       </div>
       <a class="buy-btn" href="checkout.html" style="display:block; text-align:center; text-decoration:none;">Comprar agora</a>
       <div class="buy-note">Pagamento seguro · Pix, cartão e boleto</div>
@@ -432,11 +470,40 @@ function toggleFaq(el){
   document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
   if(!wasOpen) item.classList.add('open');
 }
+const UNIT_PRICES = { 0: 75.90, 1: 89.90 };
+function formatBRL(v){ return 'R$ ' + v.toFixed(2).replace('.', ','); }
+
+function getBuybox(el){ return el.closest('.buybox'); }
+
+function getSelectedPersIndex(buybox){
+  const opts = Array.from(buybox.querySelectorAll('.price-opt'));
+  const idx = opts.findIndex(o => o.classList.contains('active'));
+  return idx === -1 ? 0 : idx;
+}
+
+function updateQtyTotal(buybox){
+  const qty = parseInt(buybox.querySelector('.qty-val').textContent, 10);
+  const persIndex = getSelectedPersIndex(buybox);
+  const unit = UNIT_PRICES[persIndex];
+  const totalEl = buybox.querySelector('.qty-unit-total');
+  if (totalEl) totalEl.textContent = formatBRL(unit * qty);
+}
+
+function changeQty(btn, delta){
+  const buybox = getBuybox(btn);
+  const valEl = buybox.querySelector('.qty-val');
+  let qty = parseInt(valEl.textContent, 10) + delta;
+  qty = Math.max(1, Math.min(10, qty));
+  valEl.textContent = qty;
+  updateQtyTotal(buybox);
+}
+
 document.querySelectorAll('.price-opt').forEach(opt => {
   opt.addEventListener('click', () => {
     const group = opt.parentElement;
     group.querySelectorAll('.price-opt').forEach(o => o.classList.remove('active'));
     opt.classList.add('active');
+    updateQtyTotal(getBuybox(opt));
   });
 });
 document.querySelectorAll('.size-opt').forEach(opt => {
@@ -445,6 +512,20 @@ document.querySelectorAll('.size-opt').forEach(opt => {
     group.querySelectorAll('.size-opt').forEach(o => {o.style.borderColor='var(--border)'; o.style.background='transparent';});
     opt.style.borderColor='var(--gold)';
     opt.style.background='rgba(184,137,45,0.14)';
+  });
+});
+
+document.querySelectorAll('.buy-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    const buybox = getBuybox(btn);
+    if (!buybox) return; // sticky bar button has no buybox, keeps default link
+    e.preventDefault();
+    const persIndex = getSelectedPersIndex(buybox);
+    const sizeOpt = buybox.querySelector('.size-opt[style*="gold"]');
+    const size = sizeOpt ? sizeOpt.textContent.trim() : 'M';
+    const qty = buybox.querySelector('.qty-val').textContent;
+    const params = new URLSearchParams({ pers: persIndex, size: size, qty: qty });
+    window.location.href = 'checkout.html?' + params.toString();
   });
 });
 </script>

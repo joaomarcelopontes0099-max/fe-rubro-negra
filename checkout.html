@@ -86,6 +86,21 @@
   .order-info .price{font-family:'Oswald',sans-serif; font-weight:600; font-size:14.5px; color:var(--gold-bright); margin-top:4px;}
   .edit-link{font-size:12px; color:var(--gold-bright); text-decoration:underline; cursor:pointer; align-self:flex-start; white-space:nowrap;}
 
+  .qty-stepper{
+    display:flex; align-items:center; gap:0; margin-top:6px;
+    border:1.5px solid var(--border); border-radius:7px; overflow:hidden; width:fit-content;
+  }
+  .qty-stepper button{
+    width:26px; height:26px; background:transparent; border:none; color:var(--text);
+    font-size:15px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; line-height:1;
+  }
+  .qty-stepper button:hover{background:rgba(184,137,45,0.14); color:var(--gold-bright);}
+  .qty-stepper .qty-val{
+    width:28px; height:26px; display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:12.5px; color:var(--text);
+    border-left:1.5px solid var(--border); border-right:1.5px solid var(--border);
+  }
+
   /* form */
   .field-row{display:flex; gap:10px; margin-bottom:12px;}
   .field{flex:1; margin-bottom:12px;}
@@ -363,8 +378,13 @@
       <img src="produto-1.jpg" alt="Camisa Flamengo Jesus Rei">
       <div class="order-info">
         <div class="name">Camisa Flamengo Jesus Rei</div>
-        <div class="meta">Tamanho M · Sem personalização</div>
-        <div class="price">R$ 75,90</div>
+        <div class="meta" id="order-meta">Tamanho M · Sem personalização</div>
+        <div class="qty-stepper">
+          <button type="button" onclick="changeQty(-1)">−</button>
+          <span class="qty-val" id="qty-val">1</span>
+          <button type="button" onclick="changeQty(1)">+</button>
+        </div>
+        <div class="price" id="order-price">R$ 75,90</div>
       </div>
       <a class="edit-link" href="index.html">Editar</a>
     </div>
@@ -570,11 +590,32 @@
 </div>
 
 <script>
-const SUBTOTAL = 75.90;
+const UNIT_PRICES = { 0: 75.90, 1: 89.90 };
+const PERS_LABELS = { 0: 'Sem personalização', 1: 'Com nome e número' };
 const PIX_DISCOUNT_RATE = 0.05;
+const QTY_MAX = 10;
 let currentPayMethod = 'pix';
 
+const orderParams = new URLSearchParams(window.location.search);
+const persIndex = orderParams.get('pers') === '1' ? 1 : 0;
+const orderSize = orderParams.get('size') || 'M';
+let quantity = Math.max(1, Math.min(QTY_MAX, parseInt(orderParams.get('qty'), 10) || 1));
+
 function formatBRL(v){ return 'R$ ' + v.toFixed(2).replace('.', ','); }
+
+function getSubtotal(){ return UNIT_PRICES[persIndex] * quantity; }
+
+function updateOrderCard(){
+  document.getElementById('order-meta').textContent = 'Tamanho ' + orderSize + ' · ' + PERS_LABELS[persIndex];
+  document.getElementById('qty-val').textContent = quantity;
+  document.getElementById('order-price').textContent = formatBRL(getSubtotal());
+}
+
+function changeQty(delta){
+  quantity = Math.max(1, Math.min(QTY_MAX, quantity + delta));
+  updateOrderCard();
+  recalcTotals();
+}
 
 function goToStep(n){
   document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
@@ -626,6 +667,7 @@ function getSelectedFrete(){
 }
 
 function recalcTotals(){
+  const SUBTOTAL = getSubtotal();
   const frete = getSelectedFrete();
   const isPix = currentPayMethod === 'pix';
   const discount = isPix ? SUBTOTAL * PIX_DISCOUNT_RATE : 0;
@@ -654,6 +696,7 @@ function recalcTotals(){
 
 function finalizarCompra(){
   if (currentPayMethod === 'cartao') return;
+  const SUBTOTAL = getSubtotal();
   const frete = getSelectedFrete();
   const isPix = currentPayMethod === 'pix';
   const discount = isPix ? SUBTOTAL * PIX_DISCOUNT_RATE : 0;
@@ -665,7 +708,8 @@ function finalizarCompra(){
     pedido: orderId,
     total: total.toFixed(2),
     frete: frete.label,
-    pagamento: payLabel
+    pagamento: payLabel,
+    qty: quantity
   });
   window.location.href = 'obrigado.html?' + params.toString();
 }
@@ -731,6 +775,7 @@ async function buscarCep(){
   }
 }
 
+updateOrderCard();
 recalcTotals();
 
 // === Máscara de celular (DDD) ===
