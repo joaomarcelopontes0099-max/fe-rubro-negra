@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Camisa Flamengo Jesus Rei | Fé Rubro-Negra</title>
+<meta name="description" content="Arte exclusiva do Cristo com coroa de espinhos e escudo dourado, numa camisa esportiva premium.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0b;
+    --bg-panel:#141311;
+    --bg-panel-2:#1b1916;
+    --text:#f7f5f1;
+    --text-muted:#a8a29b;
+    --gold:#b8892d;
+    --gold-bright:#e0ab4a;
+    --border:#2a2621;
+    --star:#e0ab4a;
+  }
+  *{box-sizing:border-box; margin:0; padding:0; min-width:0;}
+  html, body{overflow-x:hidden; max-width:100%;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Oswald', sans-serif;
+    font-weight:600;
+    line-height:1.15;
+  }
+  img{max-width:100%; display:block;}
+  .wrap{max-width:480px; margin:0 auto; background:var(--bg); min-height:100vh;}
+
+  /* trust bar */
+  .trustbar{
+    text-align:center;
+    padding:12px 16px;
+    font-size:12.5px;
+    color:var(--text-muted);
+    border-bottom:1px solid var(--border);
+  }
+  .trustbar strong{color:var(--gold-bright); font-weight:600;}
+
+  /* hero image */
+  .hero-img-wrap{width:100%; aspect-ratio:1/1; overflow:hidden;}
+  .hero-img-wrap img{width:100%; height:100%; object-fit:cover;}
+
+  /* main content pad */
+  .content{padding:22px 20px 0;}
+  .eyebrow{
+    color:var(--gold-bright);
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  h1.title{font-size:26px; color:var(--text); margin-bottom:10px;}
+  .subtitle{color:var(--text-muted); font-size:14.5px; line-height:1.5; margin-bottom:14px;}
+  .rating{display:flex; align-items:center; gap:8px; font-size:14px; margin-bottom:18px;}
+  .stars{color:var(--star); letter-spacing:1px;}
+  .rating-count{color:var(--gold-bright); font-weight:600;}
+
+  .checklist{list-style:none; margin-bottom:22px;}
+  .checklist li{display:flex; gap:10px; font-size:14.5px; color:var(--text); margin-bottom:12px; align-items:flex-start;}
+  .checklist li .ck{color:#4caf6a; font-weight:700; flex-shrink:0;}
+
+  /* purchase box */
+  .buybox{
+    background:var(--bg-panel);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:18px;
+    margin-bottom:26px;
+  }
+  .price-toggle{display:flex; gap:10px; margin-bottom:16px;}
+  .price-opt{
+    flex:1;
+    border:1.5px solid var(--border);
+    border-radius:10px;
+    padding:10px 8px;
+    text-align:center;
+    cursor:pointer;
+    background:transparent;
+  }
+  .price-opt.active{border-color:var(--gold); background:rgba(184,137,45,0.14);}
+  .price-opt .opt-label{font-size:12px; color:var(--text-muted); margin-bottom:4px;}
+  .price-opt.active .opt-label{color:var(--gold-bright);}
+  .price-opt .opt-price{font-family:'Oswald',sans-serif; font-weight:600; font-size:15px; color:var(--text);}
+
+  .price-row{margin-bottom:16px;}
+  .price-old{color:var(--text-muted); text-decoration:line-through; font-size:13.5px; margin-bottom:2px;}
+  .price-new{font-family:'Oswald',sans-serif; font-size:34px; font-weight:600; color:var(--text);}
+  .price-new sup{font-size:18px; font-weight:400;}
+  .price-note{color:var(--gold-bright); font-size:13px; font-weight:600; margin-top:2px;}
+
+  .size-label{font-size:13px; color:var(--text-muted); margin-bottom:8px;}
+  .size-grid{display:flex; gap:8px; margin-bottom:18px;}
+  .size-opt{
+    flex:1;
+    border:1.5px solid var(--border);
+    border-radius:8px;
+    padding:10px 0;
+    text-align:center;
+    font-weight:600;
+    font-size:14px;
+    color:var(--text);
+    cursor:pointer;
+  }
+  .size-opt:hover{border-color:var(--gold);}
+
+  .buy-btn{
+    width:100%;
+    background:var(--gold);
+    color:#151412;
+    border:none;
+    border-radius:11px;
+    padding:16px;
+    font-size:16px;
+    font-weight:700;
+    font-family:'Inter',sans-serif;
+    cursor:pointer;
+    box-shadow:0 8px 20px rgba(184,137,45,0.25);
+  }
+  .buy-note{text-align:center; color:var(--text-muted); font-size:12px; margin-top:10px;}
+
+  /* section */
+  .section{padding:8px 20px 30px;}
+  .section h2{font-size:22px; margin-bottom:10px;}
+  .section p.lead{color:var(--text-muted); font-size:14.5px; line-height:1.55; margin-bottom:18px;}
+
+  .img-pair{display:flex; gap:10px; margin-bottom:22px;}
+  .img-pair img{flex:1 1 0; min-width:0; width:100%; border-radius:12px; aspect-ratio:3/4; object-fit:cover;}
+
+  .feature-block{margin-bottom:18px;}
+  .feature-block h3{color:var(--gold-bright); font-size:15.5px; margin-bottom:6px;}
+  .feature-block p{color:var(--text-muted); font-size:14px; line-height:1.55;}
+
+  /* size table */
+  .size-table-wrap{overflow-x:auto; margin-bottom:10px;}
+  table.size-table{width:100%; border-collapse:collapse; font-size:13.5px;}
+  table.size-table th, table.size-table td{
+    padding:10px 8px;
+    text-align:center;
+    border-bottom:1px solid var(--border);
+  }
+  table.size-table th{color:var(--gold-bright); font-weight:600; font-size:12.5px;}
+  table.size-table td{color:var(--text);}
+  .table-note{color:var(--text-muted); font-size:12px; line-height:1.5; margin-top:8px;}
+
+  /* stock section */
+  .stock-cta{padding:10px 20px 30px;}
+  .stock-cta h2{font-size:22px; margin-bottom:4px;}
+  .stock-cta .stock-sub{color:var(--text-muted); font-size:14px; margin-bottom:18px;}
+
+  /* testimonials */
+  .testi-card{
+    background:var(--bg-panel);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px;
+    margin-bottom:14px;
+  }
+  .testi-photo{
+    width:100%; border-radius:9px; margin-bottom:12px;
+    aspect-ratio:4/5; object-fit:cover; display:block;
+  }
+  .testi-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;}
+  .testi-name{font-weight:600; font-size:14px;}
+  .testi-stars{color:var(--star); font-size:13px;}
+  .testi-text{color:var(--text-muted); font-size:13.5px; line-height:1.5; margin-bottom:8px;}
+  .testi-verified{color:#4caf6a; font-size:12px; font-weight:600;}
+
+  /* faq */
+  .faq-item{border-bottom:1px solid var(--border);}
+  .faq-q{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:16px 0; cursor:pointer; font-weight:600; font-size:14.5px;
+  }
+  .faq-q .plus{color:var(--gold-bright); font-size:18px; font-weight:400; transition:transform .2s;}
+  .faq-item.open .plus{transform:rotate(45deg);}
+  .faq-a{
+    max-height:0; overflow:hidden; color:var(--text-muted); font-size:13.5px; line-height:1.55;
+    transition:max-height .25s ease;
+  }
+  .faq-item.open .faq-a{max-height:220px; padding-bottom:16px;}
+
+  /* footer */
+  footer{
+    padding:30px 20px 40px;
+    border-top:1px solid var(--border);
+    text-align:center;
+  }
+  footer .brand{
+    font-family:'Oswald',sans-serif; font-weight:700; font-size:16px;
+    color:var(--gold-bright); text-transform:uppercase; letter-spacing:1px;
+    margin-bottom:4px;
+  }
+  footer .tagline{font-size:12.5px; color:var(--text-muted); margin-bottom:18px;}
+  footer .trust-images{margin:0 auto 16px;}
+  footer .trust-images img{max-width:320px; margin:0 auto;}
+  footer .disclaimer{color:var(--text-muted); font-size:11px; line-height:1.5; max-width:300px; margin:0 auto 10px;}
+  footer .copyright{color:var(--text-muted); font-size:11px; margin-bottom:10px;}
+  footer .legal{color:var(--text-muted); font-size:11.5px;}
+  footer .legal a{color:var(--text-muted); text-decoration:underline; margin:0 4px;}
+
+  /* sticky bottom bar */
+  .sticky-bar{
+    position:sticky; bottom:0; left:0; right:0;
+    background:rgba(10,10,11,0.92);
+    backdrop-filter:blur(6px);
+    border-top:1px solid var(--border);
+    padding:12px 20px;
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+  }
+  .sticky-bar .sb-price{font-family:'Oswald',sans-serif; font-weight:600; font-size:16px;}
+  .sticky-bar button{
+    background:var(--gold); color:#151412; border:none; border-radius:9px;
+    padding:12px 20px; font-weight:700; font-size:14px; cursor:pointer; white-space:nowrap;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="trustbar">🔒 <strong>Compra 100% Segura</strong> · Envio para todo o Brasil</div>
+
+  <div class="hero-img-wrap">
+    <img src="produto-1.jpg" alt="Camisa Flamengo Jesus Rei - frente e costas">
+  </div>
+
+  <div class="content">
+    <div class="eyebrow">Fé Rubro-Negra</div>
+    <h1 class="title">Camisa Flamengo Jesus Rei</h1>
+    <p class="subtitle">Arte exclusiva do Cristo com coroa de espinhos e escudo dourado, numa camisa esportiva premium.</p>
+
+    <div class="rating">
+      <span class="stars">★★★★★</span>
+      <span class="rating-count">+380 clientes satisfeitos</span>
+    </div>
+
+    <ul class="checklist">
+      <li><span class="ck">✓</span> Tecido dry-fit leve, macio e respirável</li>
+      <li><span class="ck">✓</span> Estampa exclusiva em alta definição, não craqueia nem desbota</li>
+      <li><span class="ck">✓</span> Personalize com seu nome e número nas costas (opcional)</li>
+    </ul>
+
+    <div class="buybox">
+      <div class="price-toggle">
+        <div class="price-opt active">
+          <div class="opt-label">Sem personalização</div>
+          <div class="opt-price">R$ 75,90</div>
+        </div>
+        <div class="price-opt">
+          <div class="opt-label">Com nome e número</div>
+          <div class="opt-price">R$ 89,90</div>
+        </div>
+      </div>
+
+      <div class="price-row">
+        <div class="price-old">de R$ 151,80</div>
+        <div class="price-new">R$ 75<sup>,90</sup></div>
+        <div class="price-note">5% OFF no Pix · Frete grátis</div>
+      </div>
+
+      <div class="size-label">Selecione o tamanho</div>
+      <div class="size-grid">
+        <div class="size-opt">P</div>
+        <div class="size-opt">M</div>
+        <div class="size-opt">G</div>
+        <div class="size-opt">GG</div>
+        <div class="size-opt">XG</div>
+      </div>
+
+      <a class="buy-btn" href="checkout.html" style="display:block; text-align:center; text-decoration:none;">Comprar agora</a>
+      <div class="buy-note">Pagamento seguro · Pix, cartão e boleto</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Fé e paixão numa camisa só</h2>
+    <p class="lead">Feita para quem não separa a torcida da fé — o escudo do Mengão e o Cristo Rei lado a lado, em dourado sobre preto.</p>
+
+    <div class="img-pair">
+      <img src="produto-3.jpg" alt="Camisa vista lateral">
+      <img src="produto-4.jpg" alt="Costas personalizadas com nome e número">
+    </div>
+
+    <div class="feature-block">
+      <h3>Tecido dry-fit premium</h3>
+      <p>Malha leve e macia, com toque esportivo — não gruda no corpo e seca rápido no dia a dia.</p>
+    </div>
+    <div class="feature-block">
+      <h3>Estampa que dura</h3>
+      <p>Impressão de alta definição, sem craquelar ou desbotar mesmo depois de várias lavagens.</p>
+    </div>
+    <div class="feature-block">
+      <h3>Personalização nas costas</h3>
+      <p>Escolha "Com nome e número" e receba a camisa com sua identificação aplicada, do jeito que a torcida de verdade usa.</p>
+    </div>
+  </div>
+
+  <div class="section" style="padding-top:0;">
+    <h2 style="font-size:18px;">Guia de tamanhos</h2>
+    <div class="size-table-wrap">
+      <table class="size-table">
+        <thead>
+          <tr><th>Tamanho</th><th>Tórax (cm)</th><th>Comprimento (cm)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>P</td><td>96 – 100</td><td>68</td></tr>
+          <tr><td>M</td><td>100 – 104</td><td>70</td></tr>
+          <tr><td>G</td><td>104 – 108</td><td>72</td></tr>
+          <tr><td>GG</td><td>108 – 112</td><td>74</td></tr>
+          <tr><td>XG</td><td>112 – 116</td><td>76</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-note">Medidas aproximadas, tiradas com a peça deitada. Em caso de dúvida entre dois tamanhos, recomendamos escolher o maior.</p>
+  </div>
+
+  <div class="stock-cta">
+    <h2>Garanta a sua</h2>
+    <div class="stock-sub">Estoque limitado desta arte exclusiva.</div>
+
+    <div class="buybox">
+      <div class="price-toggle">
+        <div class="price-opt active">
+          <div class="opt-label">Sem personalização</div>
+          <div class="opt-price">R$ 75,90</div>
+        </div>
+        <div class="price-opt">
+          <div class="opt-label">Com nome e número</div>
+          <div class="opt-price">R$ 89,90</div>
+        </div>
+      </div>
+      <div class="price-row">
+        <div class="price-old">de R$ 151,80</div>
+        <div class="price-new">R$ 75<sup>,90</sup></div>
+        <div class="price-note">5% OFF no Pix · Frete grátis</div>
+      </div>
+      <div class="size-label">Selecione o tamanho</div>
+      <div class="size-grid">
+        <div class="size-opt">P</div>
+        <div class="size-opt">M</div>
+        <div class="size-opt">G</div>
+        <div class="size-opt">GG</div>
+        <div class="size-opt">XG</div>
+      </div>
+      <a class="buy-btn" href="checkout.html" style="display:block; text-align:center; text-decoration:none;">Comprar agora</a>
+      <div class="buy-note">Pagamento seguro · Pix, cartão e boleto</div>
+    </div>
+  </div>
+
+  <div class="section" style="padding-top:0;">
+    <h2 style="font-size:18px; margin-bottom:16px;">Quem comprou, aprovou</h2>
+
+    <div class="testi-card">
+      <img class="testi-photo" src="review-1.jpg" alt="Cliente recebendo a Camisa Flamengo Jesus Rei em casa, embalada para presente">
+      <div class="testi-top"><span class="testi-name">Marcela S.</span><span class="testi-stars">★★★★★</span></div>
+      <p class="testi-text">Comprei pro meu marido, ele é flamenguista e cristão então achou que foi feita pra ele. Chegou super bem embalada, dava até pra presentear direto na caixa. A estampa é linda de perto.</p>
+      <div class="testi-verified">✓ Compra verificada</div>
+    </div>
+    <div class="testi-card">
+      <img class="testi-photo" src="review-2.jpg" alt="Cliente vestindo a Camisa Flamengo Jesus Rei">
+      <div class="testi-top"><span class="testi-name">Bruno F.</span><span class="testi-stars">★★★★★</span></div>
+      <p class="testi-text">Tamanho bateu certinho com a tabela de medidas, caimento ótimo. Já pedi outra pra dar de presente.</p>
+      <div class="testi-verified">✓ Compra verificada</div>
+    </div>
+    <div class="testi-card">
+      <img class="testi-photo" src="review-3.jpg" alt="Camisa Flamengo Jesus Rei recém-desembalada, pronta para presentear">
+      <div class="testi-top"><span class="testi-name">Lucas P.</span><span class="testi-stars">★★★★★</span></div>
+      <p class="testi-text">Levei de presente de aniversário pro meu irmão. Chegou antes do prazo e embalada com muito cuidado, ele nem imaginava que era isso.</p>
+      <div class="testi-verified">✓ Compra verificada</div>
+    </div>
+    <div class="testi-card">
+      <img class="testi-photo" src="review-4.jpg" alt="Cliente vestindo a Camisa Flamengo Jesus Rei personalizada com o nome Lucas Silva e número 10 nas costas">
+      <div class="testi-top"><span class="testi-name">Lucas Silva</span><span class="testi-stars">★★★★★</span></div>
+      <p class="testi-text">Chegou rápido e o tecido é muito melhor do que eu esperava. Mandei fazer com meu nome e ficou show, igual jersey de time mesmo.</p>
+      <div class="testi-verified">✓ Compra verificada</div>
+    </div>
+  </div>
+
+  <div class="section" style="padding-top:0;">
+    <h2 style="font-size:18px; margin-bottom:4px;">Perguntas frequentes</h2>
+
+    <div class="faq-item open">
+      <div class="faq-q" onclick="toggleFaq(this)"><span>Qual o prazo de entrega?</span><span class="plus">+</span></div>
+      <div class="faq-a">No frete grátis, o prazo é de 7 a 10 dias úteis. Se preferir receber mais rápido, o frete prioritário custa R$ 24,90 e chega em 3 a 5 dias úteis.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)"><span>Como funciona a personalização?</span><span class="plus">+</span></div>
+      <div class="faq-a">Escolha a opção "Com nome e número", digite exatamente como você quer que apareça nas costas da camisa e confirme antes de finalizar a compra. A aplicação segue o mesmo padrão mostrado nas fotos.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)"><span>Qual o tecido da camisa?</span><span class="plus">+</span></div>
+      <div class="faq-a">Dry-fit leve, macio ao toque e respirável, ideal para o uso no dia a dia.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)"><span>Posso trocar se o tamanho não servir?</span><span class="plus">+</span></div>
+      <div class="faq-a">Sim. Se o tamanho não servir, é só entrar em contato pelo nosso e-mail de suporte que a gente resolve a troca.</div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="brand">Fé Rubro-Negra</div>
+    <div class="tagline">Fé, paixão e Nação em cada detalhe.</div>
+    <div class="trust-images">
+      <img src="mercadopago.webp" alt="Compra 100% segura · Mercado Pago · Visa, Mastercard, Amex, Diners, Boleto, Hipercard, Elo, Pix">
+    </div>
+    <div class="disclaimer">Produto de marca independente. Não possui vínculo oficial com o Clube de Regatas do Flamengo.</div>
+    <div class="copyright">© 2026. Todos os direitos reservados.</div>
+    <div class="legal"><a href="#">Política de Troca</a>·<a href="#">Privacidade</a>·<a href="#">Termos de Uso</a>·<a href="#">Contato</a></div>
+  </footer>
+
+  <div class="sticky-bar">
+    <div class="sb-price">R$ 75,90</div>
+    <a href="checkout.html" style="text-decoration:none;"><button>Comprar agora</button></a>
+  </div>
+
+</div>
+
+<script>
+function toggleFaq(el){
+  const item = el.parentElement;
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if(!wasOpen) item.classList.add('open');
+}
+document.querySelectorAll('.price-opt').forEach(opt => {
+  opt.addEventListener('click', () => {
+    const group = opt.parentElement;
+    group.querySelectorAll('.price-opt').forEach(o => o.classList.remove('active'));
+    opt.classList.add('active');
+  });
+});
+document.querySelectorAll('.size-opt').forEach(opt => {
+  opt.addEventListener('click', () => {
+    const group = opt.parentElement;
+    group.querySelectorAll('.size-opt').forEach(o => {o.style.borderColor='var(--border)'; o.style.background='transparent';});
+    opt.style.borderColor='var(--gold)';
+    opt.style.background='rgba(184,137,45,0.14)';
+  });
+});
+</script>
+</body>
+</html>

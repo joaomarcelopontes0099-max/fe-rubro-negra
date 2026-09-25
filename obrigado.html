@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pedido aprovado | Fé Rubro-Negra</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0b;
+    --bg-panel:#141311;
+    --text:#f7f5f1;
+    --text-muted:#a8a29b;
+    --gold:#b8892d;
+    --gold-bright:#e0ab4a;
+    --border:#2a2621;
+    --green:#4caf6a;
+  }
+  *{box-sizing:border-box; margin:0; padding:0; min-width:0;}
+  html, body{overflow-x:hidden; max-width:100%;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:'Oswald', sans-serif; font-weight:600; line-height:1.15;}
+  a{color:inherit;}
+  .wrap{max-width:480px; margin:0 auto; background:var(--bg); min-height:100vh;}
+
+  .topbar{
+    display:flex; align-items:center; gap:10px;
+    padding:16px 20px;
+    border-bottom:1px solid var(--border);
+  }
+  .topbar .brand{font-family:'Oswald',sans-serif; font-weight:600; font-size:15px;}
+
+  .hero{
+    text-align:center;
+    padding:40px 24px 24px;
+  }
+  .check-circle{
+    width:72px; height:72px; border-radius:50%;
+    background:rgba(76,175,106,0.15);
+    display:flex; align-items:center; justify-content:center;
+    margin:0 auto 20px;
+    font-size:36px;
+    color:var(--green);
+    animation:pop .4s ease;
+  }
+  @keyframes pop{
+    0%{transform:scale(0.5); opacity:0;}
+    100%{transform:scale(1); opacity:1;}
+  }
+  .hero h1{font-size:24px; margin-bottom:8px;}
+  .hero p{color:var(--text-muted); font-size:14px; line-height:1.5;}
+  .hero .order-id{
+    display:inline-block; margin-top:14px;
+    background:var(--bg-panel); border:1px solid var(--border);
+    border-radius:20px; padding:6px 16px;
+    font-size:13px; color:var(--gold-bright); font-weight:600;
+    letter-spacing:0.5px;
+  }
+
+  .section{padding:0 20px 20px;}
+  .card{
+    background:var(--bg-panel);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px;
+    margin-bottom:16px;
+  }
+  .card h3{font-size:13px; color:var(--gold-bright); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.5px;}
+
+  .row{display:flex; justify-content:space-between; font-size:13.5px; margin-bottom:10px;}
+  .row:last-child{margin-bottom:0;}
+  .row .label{color:var(--text-muted);}
+  .row .value{font-weight:600; text-align:right;}
+
+  .order-card{display:flex; gap:12px; margin-bottom:14px;}
+  .order-card img{width:56px; height:56px; object-fit:cover; border-radius:8px; flex-shrink:0;}
+  .order-card .name{font-size:14px; font-weight:600; margin-bottom:2px;}
+  .order-card .meta{font-size:12.5px; color:var(--text-muted);}
+
+  .delivery-box{
+    display:flex; align-items:center; gap:12px;
+    background:rgba(184,137,45,0.08);
+    border:1px dashed var(--gold);
+    border-radius:10px;
+    padding:14px;
+    margin-bottom:16px;
+  }
+  .delivery-box .ic{font-size:22px; flex-shrink:0;}
+  .delivery-box .txt{font-size:13px; line-height:1.5;}
+  .delivery-box .txt strong{display:block; color:var(--gold-bright); font-size:14px; margin-bottom:2px;}
+
+  .steps{margin-bottom:16px;}
+  .step{display:flex; gap:12px; margin-bottom:16px;}
+  .step:last-child{margin-bottom:0;}
+  .step .dot{
+    width:24px; height:24px; border-radius:50%; background:var(--gold);
+    color:#151412; font-size:12px; font-weight:700;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .step .txt h4{font-size:13.5px; margin-bottom:2px;}
+  .step .txt p{font-size:12.5px; color:var(--text-muted); line-height:1.4;}
+
+  .cta-wrap{padding:4px 20px 30px;}
+  .buy-btn{
+    display:block; width:100%; text-align:center; text-decoration:none;
+    background:var(--gold);
+    color:#151412;
+    border:none;
+    border-radius:11px;
+    padding:15px;
+    font-size:15px;
+    font-weight:700;
+    font-family:'Inter',sans-serif;
+    cursor:pointer;
+    margin-bottom:10px;
+  }
+  .ghost-btn{
+    display:block; width:100%; text-align:center; text-decoration:none;
+    background:transparent;
+    color:var(--text);
+    border:1.5px solid var(--border);
+    border-radius:11px;
+    padding:14px;
+    font-size:14px;
+    font-weight:600;
+    font-family:'Inter',sans-serif;
+  }
+
+  footer{
+    padding:24px 20px 36px;
+    border-top:1px solid var(--border);
+    text-align:center;
+  }
+  footer .addr{color:var(--text-muted); font-size:12px; line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <span class="brand">Fé Rubro-Negra</span>
+  </div>
+
+  <div class="hero">
+    <div class="check-circle">✓</div>
+    <h1>Pedido aprovado!</h1>
+    <p>Recebemos o seu pagamento e já estamos preparando tudo com carinho.</p>
+    <div class="order-id" id="order-id">Pedido #FRN000000</div>
+  </div>
+
+  <div class="section">
+    <div class="delivery-box">
+      <span class="ic">🚚</span>
+      <div class="txt">
+        <strong id="delivery-window">Previsão de entrega</strong>
+        <span id="delivery-detail">Você recebe um e-mail com o código de rastreio assim que o pedido for postado.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Resumo do pedido</h3>
+      <div class="order-card">
+        <img src="produto-1.jpg" alt="Camisa Flamengo Jesus Rei">
+        <div>
+          <div class="name">Camisa Flamengo Jesus Rei</div>
+          <div class="meta">Tamanho M · Sem personalização</div>
+        </div>
+      </div>
+      <div class="row"><span class="label">Forma de envio</span><span class="value" id="s-frete">—</span></div>
+      <div class="row"><span class="label">Forma de pagamento</span><span class="value" id="s-pagamento">—</span></div>
+      <div class="row"><span class="label">Total pago</span><span class="value" id="s-total" style="color:var(--gold-bright); font-family:'Oswald',sans-serif; font-size:16px;">—</span></div>
+    </div>
+
+    <div class="card steps">
+      <h3>Próximos passos</h3>
+      <div class="step">
+        <div class="dot">1</div>
+        <div class="txt">
+          <h4>Confirmação por e-mail</h4>
+          <p>Enviamos os detalhes do pedido pro e-mail informado no checkout.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="dot">2</div>
+        <div class="txt">
+          <h4>Preparação</h4>
+          <p>Sua camisa é separada e embalada com cuidado antes do envio.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="dot">3</div>
+        <div class="txt">
+          <h4>Rastreio disponível</h4>
+          <p>Assim que for postado, você recebe o código de rastreamento.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-wrap">
+    <a class="buy-btn" href="index.html">Continuar comprando</a>
+    <a class="ghost-btn" href="mailto:sac@ferubronegra.shop">Falar com o suporte</a>
+  </div>
+
+  <footer>
+    <div class="addr">
+      Fé Rubro-Negra · CNPJ [PREENCHER]<br>
+      [Endereço da empresa] – [Cidade] – [Estado]<br>
+      sac@ferubronegra.shop
+    </div>
+  </footer>
+
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const pedido = params.get('pedido') || ('FRN' + Math.floor(100000 + Math.random() * 900000));
+const total = params.get('total');
+const frete = params.get('frete') || 'Frete grátis';
+const pagamento = params.get('pagamento') || 'Pix';
+
+document.getElementById('order-id').textContent = 'Pedido #' + pedido;
+document.getElementById('s-frete').textContent = frete;
+document.getElementById('s-pagamento').textContent = pagamento;
+document.getElementById('s-total').textContent = total ? ('R$ ' + parseFloat(total).toFixed(2).replace('.', ',')) : 'R$ 75,90';
+
+const prazos = {
+  'Frete grátis': { janela: '7 a 15 dias úteis', dias: 15 },
+  'Sedex': { janela: '3 a 5 dias úteis', dias: 5 },
+  'Jadlog': { janela: '5 a 7 dias úteis', dias: 7 }
+};
+const info = prazos[frete] || prazos['Frete grátis'];
+
+const hoje = new Date();
+const min = new Date(hoje); min.setDate(min.getDate() + (info.dias - (info.dias > 10 ? 8 : 2)));
+const max = new Date(hoje); max.setDate(max.getDate() + info.dias);
+const fmt = (d) => d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+
+document.getElementById('delivery-window').textContent = 'Chega entre ' + fmt(min) + ' e ' + fmt(max);
+document.getElementById('delivery-detail').textContent = frete + ' · ' + info.janela + ' · você recebe o rastreio por e-mail assim que for postado.';
+</script>
+</body>
+</html>
