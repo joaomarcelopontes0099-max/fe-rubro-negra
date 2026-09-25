@@ -799,6 +799,36 @@ function copiarPixCode(){
 
 let pixPollTimer = null;
 let pixOrderId = null;
+let pixCustomer = null;
+
+function getTrackingParams(){
+  const p = new URLSearchParams(window.location.search);
+  return {
+    src: p.get('src'),
+    sck: p.get('sck'),
+    utm_source: p.get('utm_source'),
+    utm_campaign: p.get('utm_campaign'),
+    utm_medium: p.get('utm_medium'),
+    utm_content: p.get('utm_content'),
+    utm_term: p.get('utm_term')
+  };
+}
+
+function notificarUtmify(status, orderId, amount, customer){
+  try {
+    fetch('/api/utmify-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        orderId: orderId,
+        status: status,
+        amount: amount,
+        customer: customer,
+        trackingParameters: getTrackingParams()
+      })
+    }).catch(() => {});
+  } catch (e) {}
+}
 
 function pararPolling(){
   if (pixPollTimer){ clearInterval(pixPollTimer); pixPollTimer = null; }
@@ -813,6 +843,7 @@ function iniciarPolling(internalId, total, frete){
       if (data.status === 'paid'){
         pararPolling();
         showPixBox('paid');
+        notificarUtmify('paid', pixOrderId, total, pixCustomer);
         setTimeout(() => irParaObrigado(pixOrderId, total, frete), 1500);
       }
     } catch (e) {
@@ -876,6 +907,8 @@ async function iniciarPagamentoPix(){
     btn.disabled = false;
 
     if (data.internal_id){
+      pixCustomer = { name: nome, email: email, phone: celularDigits, document: cpfDigits };
+      notificarUtmify('waiting_payment', orderId, total, pixCustomer);
       iniciarPolling(data.internal_id, total, frete);
     }
   } catch (err) {
