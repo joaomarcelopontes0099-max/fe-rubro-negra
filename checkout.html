@@ -263,6 +263,21 @@
     cursor:pointer;
     box-shadow:0 8px 20px rgba(184,137,45,0.2);
   }
+  .btn-primary:disabled{
+    background:#d8cdb8;
+    color:#8c8272;
+    cursor:not-allowed;
+    box-shadow:none;
+  }
+  .pay-unavailable-msg{
+    display:none;
+    color:#c9791f;
+    font-size:12.5px;
+    text-align:center;
+    margin:-8px 0 20px;
+    line-height:1.5;
+  }
+  .pay-unavailable-msg.show{display:block;}
   .btn-ghost{
     flex:0 0 auto;
     background:transparent;
@@ -507,15 +522,6 @@
           <span class="pay-sub" style="display:block;">Parcelamento no ambiente seguro</span>
         </span>
       </label>
-      <label class="pay-opt" onclick="selectPay(this,'boleto')">
-        <input type="radio" name="pagamento" value="boleto">
-        <span class="radio"></span>
-        <span class="ic">🧾</span>
-        <span class="pay-info">
-          <span class="pay-name" style="display:block;">Boleto</span>
-          <span class="pay-sub" style="display:block;">Vencimento em 3 dias úteis</span>
-        </span>
-      </label>
     </div>
 
     <div class="pay-panel active" id="panel-pix">
@@ -525,40 +531,7 @@
       </div>
     </div>
 
-    <div class="pay-panel" id="panel-cartao">
-      <div class="field">
-        <label>Número do cartão</label>
-        <input type="text" placeholder="0000 0000 0000 0000">
-      </div>
-      <div class="field">
-        <label>Nome impresso no cartão</label>
-        <input type="text" placeholder="Como está no cartão">
-      </div>
-      <div class="field-row">
-        <div class="field" style="flex:0.6;">
-          <label>Validade</label>
-          <input type="text" placeholder="MM/AA">
-        </div>
-        <div class="field" style="flex:0.6;">
-          <label>CVV</label>
-          <input type="text" placeholder="123">
-        </div>
-        <div class="field" style="flex:1.2;">
-          <label>Parcelas</label>
-          <select class="installment-select">
-            <option>1x de R$ 75,90 sem juros</option>
-            <option>2x de R$ 37,95 sem juros</option>
-            <option>3x de R$ 25,30 sem juros</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <div class="pay-panel" id="panel-boleto">
-      <div class="boleto-box">
-        O boleto é gerado após a confirmação do pedido, com vencimento em 3 dias úteis. O envio só é feito após a compensação do pagamento.
-      </div>
-    </div>
+    <div class="pay-panel" id="panel-cartao"></div>
 
     <div class="totals">
       <div class="totals-row"><span>Subtotal</span><span id="t-subtotal">R$ 75,90</span></div>
@@ -575,6 +548,7 @@
       <button class="btn-ghost" onclick="goToStep(2)">Voltar</button>
       <button class="btn-primary" id="finalizar-btn" onclick="finalizarCompra()">Gerar Pix — R$ 72,10</button>
     </div>
+    <p class="pay-unavailable-msg" id="pay-unavailable-msg">Pagamento temporariamente indisponível. Tente novamente em instantes.</p>
   </div>
 
   <div class="trust-footer">
@@ -628,6 +602,17 @@ function selectPay(el, panel){
   recalcTotals();
 }
 
+function updatePaymentAvailability(){
+  const btn = document.getElementById('finalizar-btn');
+  const msg = document.getElementById('pay-unavailable-msg');
+  const unavailable = currentPayMethod === 'cartao';
+  btn.disabled = unavailable;
+  msg.classList.toggle('show', unavailable);
+  if (unavailable){
+    btn.textContent = 'Pagamento indisponível';
+  }
+}
+
 function selectShip(el){
   document.querySelectorAll('.ship-opt').forEach(o => o.classList.remove('active'));
   el.classList.add('active');
@@ -660,16 +645,20 @@ function recalcTotals(){
 
   document.getElementById('t-total').textContent = formatBRL(total);
 
-  const btnLabel = { pix: 'Gerar Pix', cartao: 'Pagar com cartão', boleto: 'Gerar boleto' }[currentPayMethod];
-  document.getElementById('finalizar-btn').textContent = btnLabel + ' — ' + formatBRL(total);
+  updatePaymentAvailability();
+  if (currentPayMethod !== 'cartao'){
+    const btnLabel = { pix: 'Gerar Pix', cartao: 'Pagar com cartão' }[currentPayMethod];
+    document.getElementById('finalizar-btn').textContent = btnLabel + ' — ' + formatBRL(total);
+  }
 }
 
 function finalizarCompra(){
+  if (currentPayMethod === 'cartao') return;
   const frete = getSelectedFrete();
   const isPix = currentPayMethod === 'pix';
   const discount = isPix ? SUBTOTAL * PIX_DISCOUNT_RATE : 0;
   const total = SUBTOTAL - discount + frete.price;
-  const payLabel = { pix: 'Pix', cartao: 'Cartão de crédito', boleto: 'Boleto' }[currentPayMethod];
+  const payLabel = { pix: 'Pix', cartao: 'Cartão de crédito' }[currentPayMethod];
   const orderId = 'FRN' + Math.floor(100000 + Math.random() * 900000);
 
   const params = new URLSearchParams({
