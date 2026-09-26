@@ -539,17 +539,31 @@ document.querySelectorAll('.size-opt').forEach(opt => {
   });
 });
 
+// Preserva os parametros UTM/de rastreio que vieram do anuncio (utm_source,
+// utm_campaign, utm_medium, utm_content, utm_term, src, sck) para que o
+// checkout consiga enviar essa atribuicao para a UTMify. Sem isso, o clique
+// em "Comprar agora" sobrescrevia a URL e a venda ficava sem criativo.
+const ORIGINAL_TRACKING_PARAMS = new URLSearchParams(window.location.search);
+
 document.querySelectorAll('.buy-btn').forEach(btn => {
   btn.addEventListener('click', (e) => {
     const buybox = getBuybox(btn);
-    if (!buybox) return; // sticky bar button has no buybox, keeps default link
-    e.preventDefault();
-    const persIndex = getSelectedPersIndex(buybox);
-    const sizeOpt = buybox.querySelector('.size-opt[style*="gold"]');
-    const size = sizeOpt ? sizeOpt.textContent.trim() : 'M';
-    const qty = buybox.querySelector('.qty-val').textContent;
-    const params = new URLSearchParams({ pers: persIndex, size: size, qty: qty });
-    window.location.href = 'checkout.html?' + params.toString();
+    const params = new URLSearchParams(ORIGINAL_TRACKING_PARAMS);
+    if (buybox) {
+      e.preventDefault();
+      const persIndex = getSelectedPersIndex(buybox);
+      const sizeOpt = buybox.querySelector('.size-opt[style*="gold"]');
+      const size = sizeOpt ? sizeOpt.textContent.trim() : 'M';
+      const qty = buybox.querySelector('.qty-val').textContent;
+      params.set('pers', persIndex);
+      params.set('size', size);
+      params.set('qty', qty);
+      window.location.href = 'checkout.html?' + params.toString();
+    } else {
+      // sticky bar button: sem buybox, so precisa repassar os UTMs
+      e.preventDefault();
+      window.location.href = 'checkout.html' + (params.toString() ? '?' + params.toString() : '');
+    }
   });
 });
 </script>
